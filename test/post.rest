@@ -1,0 +1,8 @@
+POST  http://127.0.0.1:65501/test HTTP/1.1
+Content-Type: application/json
+
+{
+    "phonenumber": 17600878987,
+    "typecode": "sms_repassword",
+    "smscode": 244641
+}
