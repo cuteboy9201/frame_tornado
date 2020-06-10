@@ -3,7 +3,7 @@
 '''
 @Author: YouShumin
 @Date: 2020-06-08 11:16:24
-@LastEditTime: 2020-06-08 16:34:29
+@LastEditTime: 2020-06-10 10:55:17
 @LastEditors: YouShumin
 @Description: 
 @FilePath: /frame_tornado/run_server.py
@@ -13,7 +13,10 @@ import sys
 
 import tornado.options
 from tornado.options import define, options
+from configs.setting import PROJECT_NAME
+import logging
 
+LOG = logging.getLogger(__name__)
 try:
     import sentry_sdk
     from sentry_sdk.integrations.tornado import TornadoIntegration

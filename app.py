@@ -4,7 +4,7 @@
 @Author: Youshumin
 @Date: 2019-08-21 11:13:46
 @LastEditors: YouShumin
-@LastEditTime: 2020-06-08 16:35:12
+@LastEditTime: 2020-06-10 11:07:42
 '''
 import logging
 import logging.config
@@ -15,7 +15,7 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 from configs.setting import (ALLOW_HOST, COOKIE_SECRET, HOST, LOGFILE, PORT,
-                             PROJECT_NAME, RUN_NUM_CORE)
+                             PROJECT_NAME, RUN_NUM_CORE, PATH_APP_ROOT)
 from handlers import *
 from oslo.web.route import route
 from tornado.log import enable_pretty_logging
@@ -42,6 +42,7 @@ class Application(tornado.web.Application, RouteHandler):
     """初始化application"""
     def __init__(self):
         configs = dict(
+            template_path=os.path.join(PATH_APP_ROOT, "templates"),
             debug=options.debug,
             cookie_secret=COOKIE_SECRET,
             autoescape=None,
@@ -71,17 +72,20 @@ class WebApp():
 
     def run(self):
         LogHandler(LOGFILE)
-        http_server = tornado.httpserver.HTTPServer(Application(),
-                                                    xheaders=True)
         if options.debug:
             options.log_to_stderr = True
-            enable_pretty_logging()
+            enable_pretty_logging(options=options)
+            http_server = tornado.httpserver.HTTPServer(Application(),
+                                                        xheaders=True)
             logging.getLogger().setLevel(logging.DEBUG)
             http_server.listen(options.port, address=options.host)
+            LOG.debug("start app on debug!!!!")
             LOG.info("start app [%s] for %s:%s", PROJECT_NAME, options.host,
                      options.port)
         else:
-            enable_pretty_logging()
+            enable_pretty_logging(options=options)
+            http_server = tornado.httpserver.HTTPServer(Application(),
+                                                        xheaders=True)
             http_server.bind(options.port, address=options.host)
             http_server.start(RUN_NUM_CORE)
         try:
